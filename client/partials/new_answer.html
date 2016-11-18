@@ -1,0 +1,17 @@
+<div ng-controller = "friendsController">
+<a href="#/">Home</a> <a href="#/question/:id/new_answer">Back to Question</a><a href="#/index">Logout</a>
+
+<form ng-submit='getQuestionById()'>
+     <span ng-bind='question.text'> </span>
+
+    <br>
+
+      </form>
+
+      <form>
+        Your answer: <textarea name="text" rows="8" cols="40"></textarea>
+        suportig others for your answer: <textarea name="text" rows="8" cols="40"></textarea>
+        <button ng-click ='cancel()'>Cancel</button>
+        <button ng-click = 'createAnswer()'>Submit</button>
+      </form>
+</div>

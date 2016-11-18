@@ -1,0 +1,35 @@
+<div ng-controller = "friendsController">
+  {{2+3}}{{name}}
+  <a href="#/">Home</a>
+  <a href="#/index">Logout</a>
+<!-- You will attach an ng-model and an ng-submit to your forms (but might want to wait until the next tab, when you have your controllers and factory) -->
+<fieldset><legend>New Question</legend>
+<form>
+  Question: <input type="text" ng-model = "newQuestion.text">
+  Description(optional): <input type="text" name = "newQuestion.description">
+  <button ng-click ='cancel()'>Cancel</button>
+  <button ng-click = 'createQuestion()'>Submit</button>
+</form>
+<table>
+
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Actions</th>
+      <th>Actions</th>
+      <th>id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat = "friend in friends">>
+      <td>{{friend.firstName}}</td>
+      <td>{{friend.lastName}}</td>
+      <td>{{friend.birthday}}</td>
+      <td>{{friend._id}}</td>
+      <td><a href="" ng-click='delete(friend._id)'>Delete</a></td>
+    </tr>
+
+  </tbody>
+</table>
+</fieldset>
+</div>

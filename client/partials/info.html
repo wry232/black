@@ -1,0 +1,39 @@
+
+
+
+<div ng-controller = "friendsController">
+
+<form>
+  <input value="{{name}}">
+</form>
+<a href="#/new_question">Add a Question</a>
+<a href="#/index">Logout</a>
+
+Search: <input type="text" ng-model='searchKeyword'>
+  <table>
+    <thead>
+      <tr>
+        <th>Question</th>
+        <th>Answers</th>
+        <th>Actions</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat = "que in questions">
+        <td>{{que.text}}</td>
+        <td>{{que.answers.length}}</td>
+        <td><a href="#/question/{{que._id}}/new_answer">Show Answer</a></td>
+
+
+      </tr>
+    </tbody>
+  </table>
+  <form ng-submit = "toCreate()">
+    <input type="submit" value="Create">
+  </form>
+
+
+
+
+</div>

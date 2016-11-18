@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html ng-app='app'>
+  <head>
+    <meta charset="utf-8">
+    <title>First Mean</title>
+    <script src="angular/angular.js"></script>
+    <script src="angular-route/angular-route.js"></script>
+    <script src ='angular-cookies/angular-cookies.js'></script>
+    <script>
+      var app = angular.module('app', ['ngRoute']);
+
+      app.config(function ($routeProvider) {
+      $routeProvider
+
+          .when('/index', {
+            templateUrl: 'partials/login.html',
+            // controller: 'friendsController',
+            // controllerAs: 'NC'
+          })
+          .when('/question/:id/new_answer', {
+            templateUrl: 'partials/new_answer.html',
+            // controller: 'friendsController',
+            // controllerAs: 'NC'
+          })
+          .when('/', {
+            templateUrl: 'partials/info.html',
+            // controller: 'friendsController',
+            // controllerAs: 'NC'
+          })
+
+          .when('/new_question', {
+            templateUrl: 'partials/new.html',
+            // controller: 'newController',
+            // controllerAs: 'NC'
+          })
+          // when someone enters a url 'localhost:8000/#/edit', load the following partial
+          // the _id property will be passed into the $routeParams object as long as it's
+          // $routeParams is injected
+          .when('/edit/:_id', {
+            templateUrl: 'partials/edit.html',
+            // controller: 'editController',
+            // controllerAs: 'EC'
+          })
+          .when('/show/:_id', {
+            templateUrl: 'partials/show.html',
+            // controller: 'editController',
+            // controllerAs: 'EC'
+          })
+          // when someone uses any other route than above, load the following partial
+          .otherwise('/index');
+      });
+
+      app.factory('friendsFactory',function($http){
+        console.log('start friendsFactory');
+        var factory ={};
+        var users = [];
+        var user = {};
+
+        factory.createUser = function(newUser, callback) {
+                    console.log('createUser!!!!');
+                    console.log(newUser);
+                    $http.post('/users', newUser).then(function(returned_data) {
+                      console.log(returned_data.data);
+                    if (typeof(callback) == 'function'){
+                      callback(returned_data.data);
+                    }
+                    })
+                }
+        factory.createQuestion = function(newQuestion, callback) {
+                    console.log('createUser!!!!');
+                    console.log(newQuestion);
+                    $http.post('/questions', newQuestion).then(function(returned_data) {
+                      console.log(returned_data.data);
+                    if (typeof(callback) == 'function'){
+                      callback(returned_data.data);
+                    }
+                    })
+                }
+
+        factory.create = function(newQuestion, callback) {
+                    // console.log('Create Method of friends Factory');
+                    // sconsole.log(newQuestion);
+                    $http.post('/questions', newQuestion).then(function(returned_data) {
+                      console.log(returned_data.data);
+                    if (typeof(callback) == 'function'){
+                      callback(returned_data.data);
+                    }
+                    })
+                }
+        factory.index = function(callback){
+          console.log("inside factory index");
+          $http.get('/users').then(function(returned_data){
+          console.log(returned_data.data);
+          riends = returned_data.data;
+          if (typeof(callback) == 'function'){
+            callback(returned_data.data);
+          }
+          });
+        }
+
+        factory.indexUser = function(callback){
+          console.log("inside factory indexUser");
+          $http.get('/users').then(function(returned_data){
+          console.log(returned_data.data);
+          users = returned_data.data;
+          if (typeof(callback) == 'function'){
+            callback(returned_data.data);
+          }
+          });
+        }
+
+        factory.indexQuestion = function(callback){
+          console.log("inside factory indexQuestion");
+          $http.get('/questions').then(function(returned_data){
+          console.log(returned_data.data);
+          users = returned_data.data;
+          if (typeof(callback) == 'function'){
+            callback(returned_data.data);
+          }
+          });
+        }
+
+        factory.delete = function(id, callback){
+          console.log("factory delete:",id);
+          // $http.delete('/friends/:id', params:{id:id}).then(function(returned_data){
+          $http.delete('/friends/'+id).then(function(returned_data){
+            console.log(returned_data.data);
+
+            if (typeof(callback) == 'function'){
+              callback(returned_data.data);
+            }
+          })
+        }
+        factory.getQuestionById = function(id, callback){
+        console.log(id);
+        console.log("getFriendById!!!!!");
+        $http.get('/questions/'+id).then(function(returned_data){
+            console.log(returned_data.data);
+            // data.data[0].birthday = new Date(data.data[0].birthday);
+            callback(returned_data.data);
+        })
+    }
+    factory.updateFriend = function(id,friend){
+      console.log(friend);
+        // $http.put(`/friends/${friend._id}`, friend)
+        console.log("factory updateFriend@@@@");
+        $http.put('/friends/'+id,friend).then(function(returned_data){
+            console.log("&&&&&&%%#",returned_data.data);
+            // data.data[0].birthday = new Date(data.data[0].birthday);
+
+        })
+    }
+        // factory.delete = function(friend){
+        // $http.delete(`/friends/${friend._id}`);
+        // }
+          return factory;
+
+
+      })
+      app.controller('friendsController',['$scope', '$location', 'friendsFactory','$routeParams', function($scope,$location,friendsFactory,$routeParams){
+        console.log('start friendsController');
+        var friends = [];
+        var users = [];
+        var questions =[];
+        console.log(users);
+        console.log(friends);
+        function setUsers(data){
+          $scope.users = data;
+          $scope.user = {};
+        }
+        function setFriends(data){
+          $scope.friends = data;
+          $scope.friend = {};
+        }
+        function setQuestions(data){
+          $scope.questions = data;
+          $scope.question = {};
+        }
+
+        $scope.createUser = function(){
+          console.log($scope.newUser);
+          console.log("-----");
+          friendsFactory.createUser($scope.newUser,setUsers);
+          $scope.newUser = {};
+          $location.url('/');
+        }
+        $scope.indexUser = function(){
+          console.log(typeof(setUsers));
+          console.log(users);
+          friendsFactory.indexUser(function(data){
+            $scope.users = data;
+            $scope.user = {};
+          });
+
+        }
+
+        $scope.indexQuestion = function(){
+
+          console.log("indexQuestion in controller");
+          friendsFactory.indexQuestion(function(data){
+            $scope.questions = data;
+            $scope.question = {};
+          });
+
+        }
+        $scope.indexUser();
+        $scope.indexQuestion();
+
+        $scope.cancel=function(){
+          $location.url('/index');
+        }
+
+        $scope.createQuestion = function(){
+          console.log("inside createQuestion");
+          friendsFactory.createQuestion($scope.newQuestion,setQuestions);
+          $scope.newQuestion = {};
+        }
+        $scope.show=function(){
+          $scope.name = $routeParams.newUser.name;
+        }
+
+        $scope.delete = function(id){
+          console.log("controller delete",id,"after id");
+          friendsFactory.delete(id);
+
+      }
+      console.log("??????",$routeParams);
+      console.log("######",$routeParams._id);
+      $scope.updateFriend = function(){
+        console.log($scope.friend);
+        console.log($routeParams._id);
+        console.log(">>>>>");
+        friendsFactory.updateFriend($routeParams._id, $scope.friend);
+        $scope.friend = {};
+        // $location.url('/show/:_id');
+    }
+
+        $scope.toCreate = function(){
+          $location.url('/New');
+        }
+      }])
+      app.controller('showFriendIdController', ['$scope', 'friendsFactory', '$routeParams', '$location', function($s, ff, $r, $l){
+      console.log('show id  controller loaded');
+      console.log('rrtyui', $r._id);
+
+
+      ff.getQuestionById($r._id ,function(f){
+        console.log("inside controller getFriendById");
+          $s.question = f;
+
+      });
+}])
+
+
+
+    </script>
+  </head>
+  <body>
+
+
+    <div ng-app = 'app'>
+
+
+
+        <a href="#/">main</a>
+        <div ng-view="">
+        </div>
+    </div>
+  </body>
+</html>
